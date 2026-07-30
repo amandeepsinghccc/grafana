@@ -5,12 +5,32 @@ import { useObservable } from '@grafana/data/unstable';
 import { t } from '@grafana/i18n';
 import { config, locationService, reportInteraction } from '@grafana/runtime';
 import { appEvents } from 'app/core/app_events';
+import { contextSrv } from 'app/core/services/context_srv';
 import { isShallowEqual } from 'app/core/utils/isShallowEqual';
 import { KioskMode } from 'app/types/dashboard';
 
 import { type RouteDescriptor } from '../../navigation/types';
 
 import { type ReturnToPreviousProps } from './ReturnToPrevious/ReturnToPrevious';
+
+// Capture forced kiosk state once at module load — stored in a closure,
+// invisible and immutable from the DevTools console.
+const _forcedKioskEnabled = Boolean(config.bootData?.settings?.forceKioskModeForViewers);
+const _isViewer = !contextSrv.isEditor;
+const _isForcedKioskViewer = _forcedKioskEnabled && _isViewer;
+
+// Freeze the config property to prevent casual console mutation
+try {
+  if (_forcedKioskEnabled) {
+    Object.defineProperty(config.bootData.settings, 'forceKioskModeForViewers', {
+      value: true,
+      writable: false,
+      configurable: false,
+    });
+  }
+} catch {
+  // Silently ignore if already frozen
+}
 
 export interface AppChromeState {
   chromeless?: boolean;
@@ -56,6 +76,19 @@ export class AppChromeService {
     returnToPrevious: this.returnToPreviousData,
   });
 
+  constructor() {
+    if (_isForcedKioskViewer) {
+      const originalNext = this.state.next.bind(this.state);
+      this.state.next = (value: AppChromeState) => {
+        originalNext({
+          ...value,
+          kioskMode: KioskMode.Full,
+          chromeless: true,
+        });
+      };
+    }
+  }
+
   public setMatchedRoute(route: RouteDescriptor) {
     if (this.currentRoute !== route) {
       this.currentRoute = route;
@@ -80,6 +113,10 @@ export class AppChromeService {
     }
 
     Object.assign(newState, update);
+
+    if (this.isForcedKioskViewer()) {
+      newState.kioskMode = KioskMode.Full;
+    }
 
     // KioskMode overrides chromeless state
     newState.chromeless = newState.kioskMode === KioskMode.Full || this.currentRoute?.chromeless;
@@ -162,6 +199,9 @@ export class AppChromeService {
   };
 
   public onToggleKioskMode = () => {
+    if (this.isForcedKioskViewer()) {
+      return;
+    }
     const nextMode = this.getNextKioskMode();
     this.update({ kioskMode: nextMode });
     locationService.partial({ kiosk: this.getKioskUrlValue(nextMode) });
@@ -182,7 +222,14 @@ export class AppChromeService {
     this.setFullscreenWorkspace(!this.state.getValue().fullscreenWorkspace);
   };
 
+  public isForcedKioskViewer(): boolean {
+    return _isForcedKioskViewer;
+  }
+
   public exitKioskMode() {
+    if (this.isForcedKioskViewer()) {
+      return;
+    }
     this.update({ kioskMode: undefined });
     locationService.partial({ kiosk: null });
     reportInteraction('grafana_kiosk_mode', {
@@ -191,6 +238,13 @@ export class AppChromeService {
   }
 
   public setKioskModeFromUrl(kiosk: UrlQueryValue) {
+    if (this.isForcedKioskViewer()) {
+      if (this.state.getValue().kioskMode !== KioskMode.Full) {
+        this.update({ kioskMode: KioskMode.Full });
+      }
+      return;
+    }
+
     let newKioskMode: KioskMode | undefined;
 
     switch (kiosk) {

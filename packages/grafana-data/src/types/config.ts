@@ -256,6 +256,8 @@ export interface GrafanaConfig {
   awsAssumeRoleProvided: boolean;
   autoAssignOrg: boolean;
   verifyEmailEnabled: boolean;
+  forceKioskModeForViewers?: boolean;
+  chatbotUrl?: string;
   oauth: OAuthSettings;
   /** @deprecated always set to true. */
   rbacEnabled: boolean;

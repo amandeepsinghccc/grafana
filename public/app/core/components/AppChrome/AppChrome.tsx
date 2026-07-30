@@ -16,6 +16,8 @@ import { useMediaQueryMinWidth } from 'app/core/hooks/useMediaQueryMinWidth';
 import { CommandPalette } from 'app/features/commandPalette/CommandPalette';
 import { ScopesDashboards } from 'app/features/scopes/dashboards/ScopesDashboards';
 
+import { ChatbotWidget } from '../ChatbotWidget/ChatbotWidget';
+
 import { AppChromeMenu } from './AppChromeMenu';
 import { type AppChromeService, DOCKED_LOCAL_STORAGE_KEY } from './AppChromeService';
 import {
@@ -110,10 +112,13 @@ export function AppChrome({ children }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chrome, url]);
 
-  // Sync updates from kiosk mode query string back into app chrome
+  // Sync updates from kiosk mode query string back into app chrome & enforce forced kiosk mode for Viewers
   useEffect(() => {
     const queryParams = locationSearchToObject(search);
     chrome.setKioskModeFromUrl(queryParams.kiosk);
+    if (chrome.isForcedKioskViewer() && queryParams.kiosk !== 'full' && queryParams.kiosk !== true && queryParams.kiosk !== '1') {
+      locationService.partial({ kiosk: 'full' }, true);
+    }
   }, [chrome, search]);
 
   const fullscreenWorkspaceChrome = (
@@ -227,6 +232,7 @@ export function AppChrome({ children }: Props) {
       {shouldShowReturnToPrevious && state.returnToPrevious && (
         <ReturnToPrevious href={state.returnToPrevious.href} title={state.returnToPrevious.title} />
       )}
+      <ChatbotWidget />
     </div>
   );
 

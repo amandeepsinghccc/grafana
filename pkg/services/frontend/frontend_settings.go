@@ -17,8 +17,9 @@ type FSFrontendSettings struct {
 	JwtUrlLogin        bool   `json:"jwtUrlLogin,omitempty"`
 	AutoAssignOrg      bool   `json:"autoAssignOrg,omitempty"`
 	VerifyEmailEnabled bool   `json:"verifyEmailEnabled,omitempty"`
-	DisableLoginForm   bool   `json:"disableLoginForm,omitempty"`
-	DisableUserSignUp  bool   `json:"disableUserSignUp,omitempty"`
+	DisableLoginForm         bool   `json:"disableLoginForm,omitempty"`
+	DisableUserSignUp        bool   `json:"disableUserSignUp,omitempty"`
+	ForceKioskModeForViewers bool   `json:"forceKioskModeForViewers,omitempty"`
 	LoginHint          string `json:"loginHint,omitempty"`
 	PasswordHint       string `json:"passwordHint,omitempty"`
 	AnonymousEnabled   bool   `json:"anonymousEnabled,omitempty"`

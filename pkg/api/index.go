@@ -266,6 +266,13 @@ func (hs *HTTPServer) Index(c *contextmodel.ReqContext) {
 	c, span := hs.injectSpan(c, "api.Index")
 	defer span.End()
 
+	if hs.Cfg.ForceKioskModeForViewers && c.OrgRole == org.RoleViewer && c.Query("kiosk") == "" {
+		q := c.Req.URL.Query()
+		q.Set("kiosk", "full")
+		c.Redirect(c.Req.URL.Path+"?"+q.Encode(), http.StatusFound)
+		return
+	}
+
 	start := time.Now()
 	defer func() {
 		metricutil.ObserveWithExemplar(c.Req.Context(), hs.htmlHandlerRequestsDuration.WithLabelValues("index"), time.Since(start).Seconds())

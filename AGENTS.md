@@ -4,6 +4,9 @@
 
 This file provides guidance to AI agents when working with code in the Grafana repository.
 
+> [!IMPORTANT]
+> **MANDATORY CONTEXT RULE**: Every time you start working on this project or begin a new task, you **MUST** inspect the local workspace skill folder `.agents/skills/grafana-workspace/` (specifically `.agents/skills/grafana-workspace/SKILL.md` and its reference documents in `references/`) to reload full project context, architecture, commands, and coding guidelines.
+
 **Directory-scoped agent files exist for specialized areas — read them when working in those directories:**
 
 - `docs/AGENTS.md` — Documentation style guide (for work under `docs/`)

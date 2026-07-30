@@ -223,6 +223,7 @@ type FrontendSettingsDTO struct {
 	ApplicationInsightsAutoRouteTracking bool                `json:"applicationInsightsAutoRouteTracking"`
 	DisableLoginForm                     bool                `json:"disableLoginForm"`
 	DisableUserSignUp                    bool                `json:"disableUserSignUp"`
+	ForceKioskModeForViewers             bool                `json:"forceKioskModeForViewers"`
 	LoginHint                            string              `json:"loginHint"`
 	PasswordHint                         string              `json:"passwordHint"`
 	ExternalUserMngInfo                  string              `json:"externalUserMngInfo"`

@@ -515,6 +515,7 @@ type Cfg struct {
 
 	// User settings
 	AllowUserSignUp                bool
+	ForceKioskModeForViewers       bool
 	AllowUserOrgCreate             bool
 	VerifyEmailEnabled             bool
 	LoginHint                      string
@@ -2202,6 +2203,7 @@ func readOAuth2ServerSettings(cfg *Cfg) {
 func readUserSettings(iniFile *ini.File, cfg *Cfg) error {
 	users := iniFile.Section("users")
 	cfg.AllowUserSignUp = users.Key("allow_sign_up").MustBool(true)
+	cfg.ForceKioskModeForViewers = users.Key("force_kiosk_mode_for_viewers").MustBool(false)
 	cfg.AllowUserOrgCreate = users.Key("allow_org_create").MustBool(true)
 	cfg.AutoAssignOrg = users.Key("auto_assign_org").MustBool(true)
 	cfg.AutoAssignOrgId = users.Key("auto_assign_org_id").MustInt(1)

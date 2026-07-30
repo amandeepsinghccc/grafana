@@ -33,11 +33,13 @@ export function ProfileButton({ profileNode, onToggleKioskMode }: Props) {
     <TopNavBarMenu node={profileNode}>
       <>
         <MenuItem icon="palette" onClick={onToggleThemeDrawer} label={t('profile.change-theme', 'Change theme')} />
-        <Menu.Item
-          icon="monitor"
-          onClick={onToggleKioskMode}
-          label={t('profile.enable-kiosk-mode', 'Enable kiosk mode')}
-        />
+        {!(!contextSrv.isEditor && config.bootData?.settings?.forceKioskModeForViewers) && (
+          <Menu.Item
+            icon="monitor"
+            onClick={onToggleKioskMode}
+            label={t('profile.enable-kiosk-mode', 'Enable kiosk mode')}
+          />
+        )}
         {config.newsFeedEnabled && (
           <MenuItem
             icon="rss"

@@ -173,6 +173,9 @@ export class KeybindingSrv {
 
     const { kioskMode } = this.chromeService.state.getValue();
     if (kioskMode) {
+      if (this.chromeService.isForcedKioskViewer()) {
+        return;
+      }
       this.chromeService.exitKioskMode();
     }
   }
@@ -399,6 +402,9 @@ export class KeybindingSrv {
     });
 
     this.bind('d k', () => {
+      if (this.chromeService.isForcedKioskViewer()) {
+        return;
+      }
       this.chromeService.onToggleKioskMode();
     });
 

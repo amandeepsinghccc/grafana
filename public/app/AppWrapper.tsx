@@ -16,6 +16,7 @@ import { store } from 'app/store/store';
 import { ExtensionSidebarContextProvider } from './core/components/AppChrome/ExtensionSidebar/ExtensionSidebarProvider';
 import { FeatureControlContextProvider } from './core/components/AppChrome/FeatureControl/FeatureControlProvider';
 import { Branding } from './core/components/Branding/Branding';
+import { ChatbotWidget } from './core/components/ChatbotWidget/ChatbotWidget';
 import { GrafanaContext, type GrafanaContextType } from './core/context/GrafanaContext';
 import { GrafanaRouteWrapper } from './core/navigation/GrafanaRoute';
 import { type RouteDescriptor } from './core/navigation/types';
@@ -154,6 +155,7 @@ export function AppWrapper({ context }: AppWrapperProps) {
                                   <RouterWrapper {...routerWrapperProps} />
                                   <LiveConnectionWarning />
                                   <PortalContainer />
+                                  <ChatbotWidget />
                                 </div>
                               </UNSAFE_PortalProvider>
                             </FeatureControlContextProvider>
